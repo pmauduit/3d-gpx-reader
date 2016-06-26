@@ -33,3 +33,7 @@ Compile osc-render.cpp
 g++ osc-render.cpp $(pkg-config openscenegraph --libs) $(pkg-config openthreads --libs)
 ```
 
+What kind of horror does it produce ?
+=========================================
+
+![](https://raw.githubusercontent.com/pmauduit/3d-gpx-reader/master/rando.png)
