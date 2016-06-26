@@ -105,8 +105,8 @@ void dump_point3d_as_osg(point3d * point, int current) {
     double y2 = point->y + offset;
 
 
-    fprintf(stdout,"(*vertices)[%d].set(%ff, %ff, %ff);\n", current * 2,x1,y1, point->z);
-    fprintf(stdout,"(*vertices)[%d].set(%ff, %ff, %ff);\n", current * 2 + 1,x2,y2,point->z);
+    fprintf(stdout,"vertices->push_back(osg::Vec3(%ff, %ff, %ff));\n",x1,y1, point->z);
+    fprintf(stdout,"vertices->push_back(osg::Vec3(%ff, %ff, %ff));\n",x2,y2, point->z);
 }
 
 /**
