@@ -361,7 +361,7 @@ osg::ref_ptr<osg::Vec3Array> generate_trace_vertices() {
   vertices->push_back(osg::Vec3(5361.065001f, 1419.056001f, 53.830000f));
   return vertices;
 }
-int main2(void) {
+int main(void) {
 
   osg::ref_ptr<osg::Vec3Array> vertices = generate_trace_vertices();
   osg::ref_ptr<osg::Geometry> polygon = new osg::Geometry;
@@ -375,7 +375,6 @@ int main2(void) {
   border->setColorArray(colors.get());
   border->setColorBinding(osg::Geometry::BIND_OVERALL);
 
-  std::cout << vertices->size() << std::endl;
   for (int i = 0 ; i < vertices->size(); i += 2) {
     if (i + 4 >= vertices->size())
       break;
@@ -383,6 +382,32 @@ int main2(void) {
     border->addPrimitiveSet(new osg::DrawArrays(GL_LINE_LOOP, i, 4));
   }
   border->getOrCreateStateSet()->setAttribute(new osg::LineWidth(5.0f));
+
+  // creates a bounding box around the trace
+  double minx = 0, miny = 0, minz = 0, maxx = 0, maxy = 0, maxz = 0;
+  for (int i = 0 ; i < vertices->size(); ++i) {
+    osg::Vec3 currentvec3 = (* vertices)[i];
+    if (maxx < currentvec3.x()) maxx = currentvec3.x();
+    if (maxy < currentvec3.y()) maxy = currentvec3.y();
+    if (maxz < currentvec3.z()) maxz = currentvec3.z();
+    if (minx > currentvec3.x()) minx = currentvec3.x();
+    if (miny > currentvec3.y()) miny = currentvec3.y();
+    if (minz > currentvec3.z()) minz = currentvec3.z();
+  }
+  fprintf(stdout, "minx: %f, miny,: %f, minz: %f, maxx: %f, maxy: %f, maxz: %f\n",
+          minx,miny,minz,maxx,maxy,maxz);
+
+  osg::ref_ptr<osg::Vec3Array> bbox = new osg::Vec3Array;
+  bbox->push_back(osg::Vec3(minx, miny, minz));
+  bbox->push_back(osg::Vec3(maxx, miny, minz));
+  bbox->push_back(osg::Vec3(maxx, miny, maxz));
+  bbox->push_back(osg::Vec3(minx, miny, maxz));
+  bbox->push_back(osg::Vec3(maxx, maxy, minz));
+  bbox->push_back(osg::Vec3(maxx, maxy, maxz));
+  bbox->push_back(osg::Vec3(minx, maxy, maxz));
+  bbox->push_back(osg::Vec3(minx, maxy, minz));
+
+
 
   osg::ref_ptr<osg::Geode> geode = new osg::Geode;
   geode->addDrawable(polygon.get());

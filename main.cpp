@@ -145,7 +145,7 @@ point3d * get_point3d_relative(OGRFeatureH feat, point3d * origin) {
 }
 
 
-int main (int argc, char **argv) {
+int main2 (int argc, char **argv) {
 
   if (argc != 2) {
     fprintf(stdout, "Usage %s <file.gpx>\n", argv[0]);
