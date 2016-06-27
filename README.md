@@ -34,3 +34,7 @@ g++ osg-renderer.cpp $(pkg-config openscenegraph --libs) $(pkg-config openthread
 ./a.out
 ```
 
+What kind of horror does it produce ?
+=========================================
+
+![](https://raw.githubusercontent.com/pmauduit/3d-gpx-reader/master/rando.png)
