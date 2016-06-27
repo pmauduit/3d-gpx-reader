@@ -30,6 +30,7 @@ Compile osc-render.cpp
 
 
 ```
-g++ osc-render.cpp $(pkg-config openscenegraph --libs) $(pkg-config openthreads --libs)
+g++ osg-renderer.cpp $(pkg-config openscenegraph --libs) $(pkg-config openthreads --libs)
+./a.out
 ```
 
