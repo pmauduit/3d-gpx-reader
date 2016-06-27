@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
-BIN:=parser
-BIN_DEP:=main.cpp
+BIN:=3d-gpx-reader
+BIN_DEP:=main.cpp osg-renderer.cpp
 BIN_OBJ:=$(BIN_DEP:%.cpp=%.o)
 
 INSTALL_DIR:=./$(BIN)
@@ -11,8 +11,8 @@ GDB=$(shell which gdb)
 VALGRIND=$(shell which valgrind)
 STRIP=$(shell which strip)
 
-CFLAGS=-Wall $(shell pkg-config --cflags gdal) -g
-LDFLAGS=$(shell pkg-config --libs gdal)
+CFLAGS=-Wall $(shell pkg-config --cflags gdal openscenegraph) -g
+LDFLAGS=$(shell pkg-config --libs gdal openscenegraph)
 
 .PHONY: clean
 
@@ -22,6 +22,6 @@ all: $(BIN)
 	$(CC) -c $< -o $@ $(CFLAGS) $(LDFLAGS)
 
 $(BIN): $(BIN_OBJ)
-	$(CC) -o $(BIN) main.cpp $(CFLAGS) $(LDFLAGS)
+	$(CC) -o $(BIN) $(BIN_DEP) $(CFLAGS) $(LDFLAGS)
 clean:
 	rm -f $(BIN) $(BIN_OBJ)

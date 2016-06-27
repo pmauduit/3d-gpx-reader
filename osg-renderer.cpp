@@ -361,7 +361,7 @@ osg::ref_ptr<osg::Vec3Array> generate_trace_vertices() {
   vertices->push_back(osg::Vec3(5361.065001f, 1419.056001f, 53.830000f));
   return vertices;
 }
-int main(void) {
+int main2(void) {
 
   osg::ref_ptr<osg::Vec3Array> vertices = generate_trace_vertices();
   osg::ref_ptr<osg::Geometry> polygon = new osg::Geometry;
