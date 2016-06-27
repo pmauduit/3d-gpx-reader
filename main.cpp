@@ -1,12 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/time.h>
-
-#include <glib.h>
-
-#include <gdal.h>
-
+#include <gdal/gdal_priv.h>
+#include <gdal/cpl_conv.h>
+#include <gdal/ogrsf_frmts.h>
+#include <gdal/ogr_feature.h>
 
 #define GPX_ELE_FIELD "ele"
 
@@ -16,11 +11,14 @@
 static double offset = 0.0000015 / 2.0;
 
 static double factor = 10.0E6f;
-typedef struct {
-   double x;
-   double y;
-   double z;
-} point3d, * p_point3d;
+
+
+class point3d {
+ public:
+  double x;
+  double y;
+  double z;
+};
 
 /**
  * Dumps some info about a feature, was used for runtime-debugging purposes.
@@ -115,7 +113,7 @@ void dump_point3d_as_osg(point3d * point, int current) {
  */
 point3d * get_point3d_from_feature(OGRFeatureH feat) {
   OGRGeometryH geom = OGR_F_GetGeometryRef(feat);
-  point3d * point = malloc(sizeof(point3d));
+  point3d * point = new point3d;
   double x,y,z;
   if (OGR_G_GetPointCount(geom) == 1) {
     x = OGR_G_GetX(geom, 0);
@@ -156,7 +154,7 @@ int main (int argc, char **argv) {
 
   GDALAllRegister();
 
-  GDALDatasetH dataset = GDALOpenEx(argv[1], GDAL_OF_VECTOR | GDAL_OF_READONLY,
+  GDALDataset * dataset = (GDALDataset *) GDALOpenEx(argv[1], GDAL_OF_VECTOR | GDAL_OF_READONLY,
       NULL, NULL, NULL);
 
   if(dataset == NULL)
@@ -164,12 +162,10 @@ int main (int argc, char **argv) {
     fprintf(stderr, "Error opening GPX file %s.\n", argv[1]);
     abort();
   }
-  //fprintf(stdout, "GPX %s successfully opened\n", argv[1]);
 
-  for (int i = 0 ; i < GDALDatasetGetLayerCount(dataset) ; ++i) {
-    OGRLayerH layer = GDALDatasetGetLayer(dataset, i);
-    //fprintf(stdout, "Parsing layer %s\n", OGR_L_GetName(layer));
-    OGRFeatureH feat =  OGR_L_GetNextFeature(layer);
+  for (int i = 0 ; i < dataset->GetLayerCount() ; ++i) {
+    OGRLayer * layer = dataset->GetLayer(i);
+    OGRFeature * feat =  layer->GetNextFeature();
 
     point3d * reference = NULL; point3d * currentpt = NULL;
 
@@ -190,7 +186,7 @@ int main (int argc, char **argv) {
         // skip 100 features
         if (numfeat % 100 != 0) {
           numfeat++;
-          feat =  OGR_L_GetNextFeature(layer);
+          feat =  layer->GetNextFeature();
           continue;
         }
         currentpt = get_point3d_relative(feat, reference);
@@ -206,7 +202,7 @@ int main (int argc, char **argv) {
       //if (numfeat == 4) {
       //     break;
       //}
-      feat =  OGR_L_GetNextFeature(layer);
+      feat =  layer->GetNextFeature();
     }
     if (reference != NULL) {
       free(reference);
