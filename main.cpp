@@ -159,7 +159,7 @@ int main (int argc, char **argv) {
 
   if(dataset == NULL)
   {
-    fprintf(stderr, "Error opening GPX file %s.\n", argv[1]);
+    fprintf(stderr, "Error opening GPX file %s\n", argv[1]);
     abort();
   }
 
@@ -167,15 +167,13 @@ int main (int argc, char **argv) {
     OGRLayer * layer = dataset->GetLayer(i);
     OGRFeature * feat =  layer->GetNextFeature();
 
-    point3d * reference = NULL; point3d * currentpt = NULL;
-
+    point3d * refpt = NULL; point3d * currentpt = NULL;
     unsigned long numfeat = 0;
+
     while (feat != NULL) {
-      //fprintf(stdout, "ele: %f\n", get_ele(feat));
-      //dump_geometry_info(feat);
 
       if (numfeat == 0) {
-        reference = get_point3d_from_feature(feat);
+        refpt = get_point3d_from_feature(feat);
         point3d origin;
         origin.x = 0.0f;
         origin.y = 0.0f;
@@ -186,31 +184,28 @@ int main (int argc, char **argv) {
         // skip 100 features
         if (numfeat % 100 != 0) {
           numfeat++;
-          feat =  layer->GetNextFeature();
+          OGRFeature::DestroyFeature(feat);
+          feat = layer->GetNextFeature();
           continue;
         }
-        currentpt = get_point3d_relative(feat, reference);
+        currentpt = get_point3d_relative(feat, refpt);
         dump_point3d_as_osg(currentpt, numfeat);
         if (currentpt != NULL) {
-          free(currentpt);
+          delete currentpt;
           currentpt = NULL;
         }
       }
-      //dump_as_osg(feat, numfeat);
       // Next feature
       numfeat++;
-      //if (numfeat == 4) {
-      //     break;
-      //}
-      feat =  layer->GetNextFeature();
+      OGRFeature::DestroyFeature(feat);
+      feat = layer->GetNextFeature();
     }
-    if (reference != NULL) {
-      free(reference);
-      reference = NULL;
+    if (refpt != NULL) {
+      delete refpt;
+      refpt = NULL;
     }
-    //fprintf(stdout, "%lu features in this layer\n\n", numfeat);
   }
 
-  GDALClose(dataset);
+  delete dataset;
   return 0;
 }
