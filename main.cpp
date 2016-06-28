@@ -10,7 +10,8 @@
 // to extrude a surface.
 static double offset = 0.0000015 / 2.0;
 
-static double factor = 10.0E6f;
+static double xyfactor = 10.0E6f;
+static double zfactor = 210.0f;
 
 
 class point3d {
@@ -96,7 +97,6 @@ void dump_as_osg(OGRFeatureH feat, int current) {
 }
 
 void dump_point3d_as_osg(point3d * point, int current) {
-    // TODO apply offset + factor
     double x1 = point->x - offset;
     double x2 = point->x + offset;
     double y1 = point->y - offset;
@@ -138,8 +138,9 @@ point3d * get_point3d_relative(OGRFeatureH feat, point3d * origin) {
     point->y -= origin->y;
     point->z -= origin->z;
 
-    point->x *= factor;
-    point->y *= factor;
+    point->x *= xyfactor;
+    point->y *= xyfactor;
+    point->z *= zfactor;
 
     return point;
 }
