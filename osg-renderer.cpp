@@ -408,7 +408,9 @@ int main(void) {
   bbox->push_back(osg::Vec3(minx, maxy, minz)); // 7
   osg::ref_ptr<osg::Geometry> boxborder = new osg::Geometry;
   boxborder->setVertexArray(bbox.get());
-  boxborder->setColorArray(colors.get());
+  osg::ref_ptr<osg::Vec4Array> bboxcolors = new osg::Vec4Array(1);
+  (*bboxcolors)[0].set(0.0f, 0.0f, 0.0f, 1.0f);
+  boxborder->setColorArray(bboxcolors.get());
   boxborder->setColorBinding(osg::Geometry::BIND_OVERALL);
   // face 1
   osg::DrawElementsUInt* bbf1 = 
