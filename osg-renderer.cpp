@@ -398,20 +398,73 @@ int main(void) {
           minx,miny,minz,maxx,maxy,maxz);
 
   osg::ref_ptr<osg::Vec3Array> bbox = new osg::Vec3Array;
-  bbox->push_back(osg::Vec3(minx, miny, minz));
-  bbox->push_back(osg::Vec3(maxx, miny, minz));
-  bbox->push_back(osg::Vec3(maxx, miny, maxz));
-  bbox->push_back(osg::Vec3(minx, miny, maxz));
-  bbox->push_back(osg::Vec3(maxx, maxy, minz));
-  bbox->push_back(osg::Vec3(maxx, maxy, maxz));
-  bbox->push_back(osg::Vec3(minx, maxy, maxz));
-  bbox->push_back(osg::Vec3(minx, maxy, minz));
+  bbox->push_back(osg::Vec3(minx, miny, minz)); // 0
+  bbox->push_back(osg::Vec3(maxx, miny, minz)); // 1
+  bbox->push_back(osg::Vec3(maxx, miny, maxz)); // 2
+  bbox->push_back(osg::Vec3(minx, miny, maxz)); // 3
+  bbox->push_back(osg::Vec3(maxx, maxy, minz)); // 4
+  bbox->push_back(osg::Vec3(maxx, maxy, maxz)); // 5
+  bbox->push_back(osg::Vec3(minx, maxy, maxz)); // 6
+  bbox->push_back(osg::Vec3(minx, maxy, minz)); // 7
+  osg::ref_ptr<osg::Geometry> boxborder = new osg::Geometry;
+  boxborder->setVertexArray(bbox.get());
+  boxborder->setColorArray(colors.get());
+  boxborder->setColorBinding(osg::Geometry::BIND_OVERALL);
+  // face 1
+  osg::DrawElementsUInt* bbf1 = 
+               new osg::DrawElementsUInt(osg::PrimitiveSet::LINE_LOOP, 0);
+  bbf1->push_back(0);
+  bbf1->push_back(1);
+  bbf1->push_back(2);
+  bbf1->push_back(3);
+  // face 2
+  osg::DrawElementsUInt* bbf2 = 
+               new osg::DrawElementsUInt(osg::PrimitiveSet::LINE_LOOP, 0);
+  bbf2->push_back(1);
+  bbf2->push_back(4);
+  bbf2->push_back(5);
+  bbf2->push_back(2);
+  // face 3
+  osg::DrawElementsUInt* bbf3 = 
+               new osg::DrawElementsUInt(osg::PrimitiveSet::LINE_LOOP, 0);
+  bbf3->push_back(4);
+  bbf3->push_back(5);
+  bbf3->push_back(6);
+  bbf3->push_back(7);
+  // face 4
+  osg::DrawElementsUInt* bbf4 = 
+               new osg::DrawElementsUInt(osg::PrimitiveSet::LINE_LOOP, 0);
+  bbf4->push_back(0);
+  bbf4->push_back(7);
+  bbf4->push_back(6);
+  bbf4->push_back(3);
+  // face 5
+  osg::DrawElementsUInt* bbf5 = 
+               new osg::DrawElementsUInt(osg::PrimitiveSet::LINE_LOOP, 0);
+  bbf5->push_back(0);
+  bbf5->push_back(1);
+  bbf5->push_back(4);
+  bbf5->push_back(7);
+  // face 6
+  osg::DrawElementsUInt* bbf6 = 
+               new osg::DrawElementsUInt(osg::PrimitiveSet::LINE_LOOP, 0);
+  bbf6->push_back(3);
+  bbf6->push_back(2);
+  bbf6->push_back(5);
+  bbf6->push_back(6);
 
+  boxborder->addPrimitiveSet(bbf1);
+  boxborder->addPrimitiveSet(bbf2);
+  boxborder->addPrimitiveSet(bbf3);
+  boxborder->addPrimitiveSet(bbf4);
+  boxborder->addPrimitiveSet(bbf5);
+  boxborder->addPrimitiveSet(bbf6);
 
 
   osg::ref_ptr<osg::Geode> geode = new osg::Geode;
   geode->addDrawable(polygon.get());
   geode->addDrawable(border.get());
+  geode->addDrawable(boxborder.get());
   osg::ref_ptr<osg::Group> root = new osg::Group;
   root->addChild(geode.get());
   osgViewer::Viewer viewer;
