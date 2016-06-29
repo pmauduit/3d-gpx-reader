@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 BIN:=3d-gpx-reader
-BIN_DEP:=main.cpp osg-renderer.cpp
+BIN_DEP:=main.cpp osg-renderer.cpp gpx-parser.cpp
 BIN_OBJ:=$(BIN_DEP:%.cpp=%.o)
 
 INSTALL_DIR:=./$(BIN)
